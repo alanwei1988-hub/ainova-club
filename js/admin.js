@@ -346,9 +346,88 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   // Open photo modal
-  window.openPhotoModal = function() {
-    alert('照片上传功能开发中！');
+  window.openPhotoModal = async function() {
+    // Load events for dropdown
+    try {
+      const { data: events } = await supabase
+        .from('events')
+        .select('id, title')
+        .order('event_date', { ascending: false });
+      
+      const photoEvent = document.getElementById('photoEvent');
+      if (photoEvent && events) {
+        photoEvent.innerHTML = '<option value="">不关联活动</option>' + 
+          events.map(e => `<option value="${e.id}">${e.title}</option>`).join('');
+      }
+    } catch (err) {
+      console.error('Load events error:', err);
+    }
+    
+    document.getElementById('photoForm').reset();
+    document.getElementById('photoModal').classList.remove('hidden');
   };
+
+  // Close photo modal
+  window.closePhotoModal = function() {
+    document.getElementById('photoModal').classList.add('hidden');
+  };
+
+  // Handle photo upload
+  const photoForm = document.getElementById('photoForm');
+  if (photoForm) {
+    photoForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const fileInput = document.getElementById('photoFile');
+      const caption = document.getElementById('photoCaption').value.trim();
+      const eventId = document.getElementById('photoEvent').value;
+      const displayOrder = parseInt(document.getElementById('photoOrder').value) || 0;
+      
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert('请选择照片');
+        return;
+      }
+      
+      const file = fileInput.files[0];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      
+      try {
+        // Upload to Supabase Storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('gallery-photos')
+          .upload(fileName, file);
+        
+        if (uploadError) throw uploadError;
+        
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('gallery-photos')
+          .getPublicUrl(fileName);
+        
+        // Save to database
+        const { error: dbError } = await supabase
+          .from('gallery_photos')
+          .insert([{
+            image_url: publicUrl,
+            caption: caption || null,
+            event_id: eventId || null,
+            display_order: displayOrder
+          }]);
+        
+        if (dbError) throw dbError;
+        
+        console.log('✅ Photo uploaded');
+        closePhotoModal();
+        loadGallery();
+        alert('照片上传成功！');
+        
+      } catch (err) {
+        console.error('❌ Upload error:', err);
+        alert('上传失败：' + err.message);
+      }
+    });
+  }
 
   // Initialize
   console.log('🚀 Initializing admin dashboard...');

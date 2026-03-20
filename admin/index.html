@@ -217,6 +217,133 @@
     </div>
   </div>
 
+  <!-- Upload Photo Modal -->
+  <div id="photoModal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closePhotoModal()"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative w-full max-w-lg modal">
+        <button onclick="closePhotoModal()" class="absolute -top-4 -right-4 w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+        
+        <div class="glass-card rounded-2xl p-8">
+          <h2 class="text-2xl font-bold gradient-text mb-6">📸 上传照片</h2>
+          
+          <form id="photoForm" class="space-y-5">
+            <div>
+              <label class="block text-pink-400 text-xs font-mono mb-2">选择照片 *</label>
+              <input type="file" id="photoFile" accept="image/*" required 
+                class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-pink-500 transition-all cursor-pointer">
+              <p class="text-xs text-gray-500 mt-2">支持 JPG, PNG, WebP 格式</p>
+            </div>
+            
+            <div>
+              <label class="block text-purple-400 text-xs font-mono mb-2">照片描述</label>
+              <input type="text" id="photoCaption" 
+                class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-all"
+                placeholder="例如：AI Night 活动现场">
+            </div>
+            
+            <div>
+              <label class="block text-cyan-400 text-xs font-mono mb-2">关联活动（可选）</label>
+              <select id="photoEvent" 
+                class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-cyan-500 transition-all cursor-pointer">
+                <option value="">不关联活动</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-green-400 text-xs font-mono mb-2">显示顺序</label>
+              <input type="number" id="photoOrder" value="0" min="0"
+                class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-green-500 transition-all"
+                placeholder="0">
+              <p class="text-xs text-gray-500 mt-2">数字越小越靠前</p>
+            </div>
+            
+            <button type="submit" 
+              class="w-full py-4 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 hover:from-pink-400 hover:via-purple-400 hover:to-cyan-400 text-white font-mono font-bold rounded-lg transition-all transform hover:scale-[1.02]">
+              上传照片
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeEventModal()"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative w-full max-w-2xl modal">
+        <button onclick="closeEventModal()" class="absolute -top-4 -right-4 w-10 h-10 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+        
+        <div class="glass-card rounded-2xl p-8">
+          <h2 id="modalTitle" class="text-2xl font-bold gradient-text mb-6">新建活动</h2>
+          
+          <form id="eventForm" class="space-y-5">
+            <input type="hidden" id="eventId">
+            
+            <div>
+              <label class="block text-cyan-400 text-xs font-mono mb-2">活动主题 *</label>
+              <input type="text" id="eventTitle" required 
+                class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-cyan-500 transition-all"
+                placeholder="例如：AI Night: Multi-Agent 系统实战">
+            </div>
+            
+            <div>
+              <label class="block text-purple-400 text-xs font-mono mb-2">活动介绍 *</label>
+              <textarea id="eventDescription" required rows="4"
+                class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-all resize-none"
+                placeholder="介绍活动内容、亮点、适合人群等"></textarea>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-pink-400 text-xs font-mono mb-2">活动时间 *</label>
+                <input type="datetime-local" id="eventDate" required 
+                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-pink-500 transition-all [&::-webkit-calendar-picker-indicator]:invert">
+              </div>
+              <div>
+                <label class="block text-green-400 text-xs font-mono mb-2">人数限制 *</label>
+                <input type="number" id="eventCapacity" required min="1"
+                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-green-500 transition-all"
+                  placeholder="30">
+              </div>
+            </div>
+            
+            <div>
+              <label class="block text-yellow-400 text-xs font-mono mb-2">活动地点 *</label>
+              <input type="text" id="eventLocation" required 
+                class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-yellow-500 transition-all"
+                placeholder="例如：上海市杨浦区启迪之星孵化器">
+            </div>
+            
+            <div>
+              <label class="block text-blue-400 text-xs font-mono mb-2">负责人邮箱（接收报名通知）</label>
+              <input type="email" id="organizerEmail" 
+                class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-blue-500 transition-all"
+                placeholder="organizer@example.com">
+            </div>
+            
+            <div class="flex gap-4 pt-4">
+              <button type="submit" 
+                class="flex-1 py-4 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 hover:from-cyan-400 hover:via-purple-400 hover:to-pink-400 text-white font-mono font-bold rounded-lg transition-all transform hover:scale-[1.02]">
+                保存活动
+              </button>
+              <button type="button" id="deleteBtn" onclick="deleteEvent()" 
+                class="px-8 py-4 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors font-mono font-bold">
+                删除
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="../js/admin.js"></script>
 </body>
 </html>

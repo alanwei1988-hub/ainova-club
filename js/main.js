@@ -170,17 +170,61 @@ window.addEventListener('DOMContentLoaded', function() {
   // Wait for Supabase to be available
   if (typeof window.ainova !== 'undefined') {
     loadEvents();
+    loadGallery();
   } else {
     // Wait a bit for supabase.js to load
     setTimeout(function() {
       if (typeof window.ainova !== 'undefined') {
         loadEvents();
+        loadGallery();
       } else {
         console.error('❌ Supabase not initialized');
       }
     }, 500);
   }
 });
+
+// Load gallery photos from Supabase
+async function loadGallery() {
+  const galleryList = document.getElementById('galleryList');
+  if (!galleryList) return;
+  
+  try {
+    const { data: photos, error } = await window.ainova.supabase
+      .from('gallery_photos')
+      .select('*')
+      .order('display_order', { ascending: true })
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    
+    if (photos.length === 0) {
+      galleryList.innerHTML = '<div class="col-span-full text-center text-gray-400 py-16"><p>暂无照片</p></div>';
+      return;
+    }
+    
+    galleryList.innerHTML = photos.map((photo, index) => {
+      const date = photo.created_at ? new Date(photo.created_at).toLocaleDateString('zh-CN') : '';
+      const isLarge = index % 5 === 0; // First photo of every 5 is large
+      
+      return `
+        <div class="photo-item rounded-lg ${isLarge ? 'md:col-span-2 md:row-span-2' : ''} cursor-pointer">
+          <img src="${photo.image_url}" alt="${photo.caption || 'Gallery photo'}" class="w-full h-full object-cover" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%23333\' width=\'400\' height=\'300\'/%3E%3Ctext fill=\'%23999\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\'%3EImage not found%3C/text%3E%3C/svg%3E'">
+          <div class="photo-overlay">
+            <div>
+              ${date ? `<div class="text-pink-400 font-mono text-xs mb-1">${date}</div>` : ''}
+              ${photo.caption ? `<h4 class="text-lg font-bold">${photo.caption}</h4>` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+  } catch (err) {
+    console.error('❌ Load gallery error:', err);
+    galleryList.innerHTML = '<div class="col-span-full text-center text-red-400 py-16"><p>加载照片失败</p></div>';
+  }
+}
 
 // Mobile menu toggle
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
