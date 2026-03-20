@@ -19,13 +19,29 @@ document.addEventListener('DOMContentLoaded', function() {
   // Check authentication
   async function checkAuth() {
     try {
+      console.log('🔍 Checking auth session...');
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) throw error;
       
       if (session) {
         console.log('✅ Session found:', session.user.email);
         currentUser = session.user;
-        showDashboard();
+        
+        // Close login screen and show dashboard
+        const loginScreen = document.getElementById('loginScreen');
+        if (loginScreen) loginScreen.classList.add('hidden');
+        
+        const dashboard = document.getElementById('dashboard');
+        if (dashboard) dashboard.classList.remove('hidden');
+        
+        // Close any open modals
+        document.querySelectorAll('[id$="Modal"]').forEach(modal => {
+          if (modal) modal.classList.add('hidden');
+        });
+        
+        loadEvents();
+      } else {
+        console.log('ℹ️ No active session');
       }
     } catch (err) {
       console.error('❌ Auth check error:', err);
@@ -41,6 +57,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const password = document.getElementById('password').value;
       const errorEl = document.getElementById('loginError');
       
+      console.log('🔐 Login attempt:', email);
+      
       try {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -48,6 +66,13 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('✅ Login successful:', data.user.email);
         currentUser = data.user;
         if (errorEl) errorEl.classList.add('hidden');
+        
+        // Close any open modals
+        const eventModal = document.getElementById('eventModal');
+        const photoModal = document.getElementById('photoModal');
+        if (eventModal) eventModal.classList.add('hidden');
+        if (photoModal) photoModal.classList.add('hidden');
+        
         showDashboard();
         
       } catch (err) {
@@ -70,8 +95,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Show dashboard
   function showDashboard() {
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('dashboard').classList.remove('hidden');
+    console.log('📊 Showing dashboard...');
+    
+    const loginScreen = document.getElementById('loginScreen');
+    const dashboard = document.getElementById('dashboard');
+    
+    if (loginScreen) loginScreen.classList.add('hidden');
+    if (dashboard) dashboard.classList.remove('hidden');
+    
+    // Close all modals
+    document.querySelectorAll('[id$="Modal"]').forEach(modal => {
+      if (modal) modal.classList.add('hidden');
+    });
+    
     loadEvents();
   }
 
