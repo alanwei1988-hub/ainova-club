@@ -166,14 +166,21 @@ async function loadEvents() {
 }
 
 // Load events when page loads
-if (typeof window.ainova !== 'undefined') {
-  loadEvents();
-} else {
-  // Wait for Supabase to initialize
-  window.addEventListener('DOMContentLoaded', function() {
-    setTimeout(loadEvents, 1000);
-  });
-}
+window.addEventListener('DOMContentLoaded', function() {
+  // Wait for Supabase to be available
+  if (typeof window.ainova !== 'undefined') {
+    loadEvents();
+  } else {
+    // Wait a bit for supabase.js to load
+    setTimeout(function() {
+      if (typeof window.ainova !== 'undefined') {
+        loadEvents();
+      } else {
+        console.error('❌ Supabase not initialized');
+      }
+    }, 500);
+  }
+});
 
 // Mobile menu toggle
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
