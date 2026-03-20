@@ -150,14 +150,21 @@ body {
 
 /* Mobile Optimizations */
 @media (max-width: 768px) {
-  /* Reduce animation intensity on mobile */
+  /* Optimize glitch effect for mobile (keep it but reduce intensity) */
   .glitch {
-    animation: none;
+    animation: glitch-skew 2s infinite linear alternate-reverse;
   }
   
-  .glitch::before,
+  .glitch::before {
+    left: 1px;
+    text-shadow: -1px 0 #ff00ff;
+    animation: glitch-anim 3s infinite linear alternate-reverse;
+  }
+  
   .glitch::after {
-    display: none;
+    left: -1px;
+    text-shadow: -1px 0 #00ffff;
+    animation: glitch-anim2 3s infinite linear alternate-reverse;
   }
   
   /* Optimize binary canvas for mobile */
