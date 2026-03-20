@@ -3,48 +3,36 @@
 const SUPABASE_URL = 'https://rpxskfxuaqgzrfpbsgzn.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_eCKBX0TP4ykyL7UXiVxb_g_st316sRi';
 
-// Wait for DOM and Supabase library
 document.addEventListener('DOMContentLoaded', function() {
   console.log('🔧 Admin dashboard loading...');
   
-  // Check if Supabase is loaded
   if (typeof window.supabase === 'undefined') {
     console.error('❌ Supabase library not loaded!');
-    const errorEl = document.getElementById('loginError');
-    if (errorEl) {
-      errorEl.textContent = 'Supabase 库未加载，请刷新页面';
-      errorEl.classList.remove('hidden');
-    }
     return;
   }
   
-  // Initialize Supabase client
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   console.log('✅ Supabase initialized');
   
   let currentUser = null;
 
-  // Check authentication status
+  // Check authentication
   async function checkAuth() {
     try {
-      console.log('🔍 Checking auth session...');
       const { data: { session }, error } = await supabase.auth.getSession();
-      
       if (error) throw error;
       
       if (session) {
         console.log('✅ Session found:', session.user.email);
         currentUser = session.user;
         showDashboard();
-      } else {
-        console.log('ℹ️ No active session');
       }
     } catch (err) {
       console.error('❌ Auth check error:', err);
     }
   }
 
-  // Handle login form
+  // Login handler
   const loginForm = document.getElementById('loginForm');
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
@@ -53,19 +41,12 @@ document.addEventListener('DOMContentLoaded', function() {
       const password = document.getElementById('password').value;
       const errorEl = document.getElementById('loginError');
       
-      console.log('🔐 Login attempt:', email);
-      
       try {
-        const { data, error } = await supabase.auth.signInWithPassword({ 
-          email, 
-          password 
-        });
-        
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         
         console.log('✅ Login successful:', data.user.email);
         currentUser = data.user;
-        
         if (errorEl) errorEl.classList.add('hidden');
         showDashboard();
         
@@ -79,23 +60,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Logout function
+  // Logout
   window.logout = async function() {
-    console.log('👋 Logging out...');
-    try {
-      await supabase.auth.signOut();
-      currentUser = null;
-      document.getElementById('loginScreen').classList.remove('hidden');
-      document.getElementById('dashboard').classList.add('hidden');
-      console.log('✅ Logged out');
-    } catch (err) {
-      console.error('❌ Logout error:', err);
-    }
+    await supabase.auth.signOut();
+    currentUser = null;
+    document.getElementById('loginScreen').classList.remove('hidden');
+    document.getElementById('dashboard').classList.add('hidden');
   };
 
   // Show dashboard
   function showDashboard() {
-    console.log('📊 Showing dashboard...');
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
     loadEvents();
@@ -103,9 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Tab navigation
   window.showTab = function(tabName) {
-    document.querySelectorAll('.tab-content').forEach(tab => {
-      tab.classList.add('hidden');
-    });
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
     document.getElementById(tabName + 'Tab').classList.remove('hidden');
     
     if (tabName === 'events') loadEvents();
@@ -124,8 +96,10 @@ document.addEventListener('DOMContentLoaded', function() {
       if (error) throw error;
       
       const eventsList = document.getElementById('eventsList');
-      if (!eventsList || events.length === 0) {
-        if (eventsList) eventsList.innerHTML = '<p class="text-gray-400">暂无活动</p>';
+      if (!eventsList) return;
+      
+      if (events.length === 0) {
+        eventsList.innerHTML = '<p class="text-gray-400 text-center py-8">暂无活动，点击右上角新建</p>';
         return;
       }
       
@@ -133,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="glass-card rounded-xl p-6">
           <div class="flex justify-between items-start flex-wrap gap-4">
             <div class="flex-1 min-w-0">
-              <h3 class="text-xl font-bold mb-2 truncate">${event.title}</h3>
+              <h3 class="text-xl font-bold mb-2">${event.title}</h3>
               <p class="text-gray-400 mb-4 text-sm">${event.description}</p>
               <div class="flex flex-wrap gap-4 text-xs text-gray-500">
                 <span>📅 ${new Date(event.event_date).toLocaleString('zh-CN')}</span>
@@ -143,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
               </div>
             </div>
             <div class="flex gap-2 flex-shrink-0">
-              <button onclick="alert('编辑功能开发中')" class="px-4 py-2 bg-cyan-500/20 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-colors text-sm">编辑</button>
+              <button onclick="editEvent('${event.id}')" class="px-4 py-2 bg-cyan-500/20 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-colors text-sm">编辑</button>
               <button onclick="viewRegistrations('${event.id}')" class="px-4 py-2 bg-purple-500/20 text-purple-400 rounded-lg hover:bg-purple-500/30 transition-colors text-sm">查看报名</button>
             </div>
           </div>
@@ -162,7 +136,130 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   };
 
-  // View registrations for specific event
+  // Open create modal
+  window.openCreateModal = function() {
+    document.getElementById('modalTitle').textContent = '新建活动';
+    document.getElementById('eventForm').reset();
+    document.getElementById('eventId').value = '';
+    document.getElementById('deleteBtn').classList.add('hidden');
+    document.getElementById('eventModal').classList.remove('hidden');
+  };
+
+  // Close modal
+  window.closeEventModal = function() {
+    document.getElementById('eventModal').classList.add('hidden');
+  };
+
+  // Edit event
+  window.editEvent = async function(eventId) {
+    try {
+      const { data: event, error } = await supabase
+        .from('events')
+        .select('*')
+        .eq('id', eventId)
+        .single();
+      
+      if (error) throw error;
+      
+      document.getElementById('modalTitle').textContent = '编辑活动';
+      document.getElementById('eventId').value = event.id;
+      document.getElementById('eventTitle').value = event.title;
+      document.getElementById('eventDescription').value = event.description;
+      document.getElementById('eventLocation').value = event.location;
+      document.getElementById('eventCapacity').value = event.capacity;
+      document.getElementById('organizerEmail').value = event.organizer_email || '';
+      
+      // Format datetime for input
+      const date = new Date(event.event_date);
+      const localISO = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+      document.getElementById('eventDate').value = localISO;
+      
+      document.getElementById('deleteBtn').classList.remove('hidden');
+      document.getElementById('eventModal').classList.remove('hidden');
+      
+    } catch (err) {
+      console.error('❌ Load event error:', err);
+      alert('加载活动信息失败');
+    }
+  };
+
+  // Save event (create or update)
+  const eventForm = document.getElementById('eventForm');
+  if (eventForm) {
+    eventForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const eventId = document.getElementById('eventId').value;
+      const eventData = {
+        title: document.getElementById('eventTitle').value.trim(),
+        description: document.getElementById('eventDescription').value.trim(),
+        location: document.getElementById('eventLocation').value.trim(),
+        capacity: parseInt(document.getElementById('eventCapacity').value),
+        event_date: new Date(document.getElementById('eventDate').value).toISOString(),
+        organizer_email: document.getElementById('organizerEmail').value.trim(),
+        updated_at: new Date().toISOString()
+      };
+      
+      try {
+        if (eventId) {
+          // Update existing event
+          const { error } = await supabase
+            .from('events')
+            .update(eventData)
+            .eq('id', eventId);
+          
+          if (error) throw error;
+          console.log('✅ Event updated');
+          
+        } else {
+          // Create new event
+          eventData.status = 'upcoming';
+          const { error } = await supabase
+            .from('events')
+            .insert([eventData]);
+          
+          if (error) throw error;
+          console.log('✅ Event created');
+        }
+        
+        closeEventModal();
+        loadEvents();
+        alert('活动保存成功！');
+        
+      } catch (err) {
+        console.error('❌ Save event error:', err);
+        alert('保存失败：' + err.message);
+      }
+    });
+  }
+
+  // Delete event
+  window.deleteEvent = async function() {
+    const eventId = document.getElementById('eventId').value;
+    if (!eventId) return;
+    
+    if (!confirm('确定要删除这个活动吗？相关报名数据也会被删除。')) return;
+    
+    try {
+      const { error } = await supabase
+        .from('events')
+        .delete()
+        .eq('id', eventId);
+      
+      if (error) throw error;
+      
+      console.log('✅ Event deleted');
+      closeEventModal();
+      loadEvents();
+      alert('活动已删除');
+      
+    } catch (err) {
+      console.error('❌ Delete error:', err);
+      alert('删除失败：' + err.message);
+    }
+  };
+
+  // View registrations
   window.viewRegistrations = function(eventId) {
     showTab('registrations');
     const eventFilter = document.getElementById('eventFilter');
@@ -185,7 +282,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       const { data: registrations, error } = await query;
-      
       if (error) throw error;
       
       const registrationsList = document.getElementById('registrationsList');
@@ -232,13 +328,13 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       galleryList.innerHTML = photos.map(photo => `
-        <div class="glass-card rounded-xl overflow-hidden group">
-          <img src="${photo.image_url}" alt="${photo.caption}" class="w-full h-48 object-cover" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'200\'%3E%3Crect fill=\'%23333\' width=\'400\' height=\'200\'/%3E%3Ctext fill=\'%23999\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\'%3EImage not found%3C/text%3E%3C/svg%3E'">
+        <div class="glass-card rounded-xl overflow-hidden">
+          <img src="${photo.image_url}" alt="${photo.caption}" class="w-full h-48 object-cover">
           <div class="p-4">
             <p class="text-sm text-gray-400 mb-3">${photo.caption || '无描述'}</p>
             <div class="flex gap-2">
-              <button class="flex-1 px-3 py-2 bg-cyan-500/20 text-cyan-400 rounded text-xs hover:bg-cyan-500/30 transition-colors">编辑</button>
-              <button class="flex-1 px-3 py-2 bg-red-500/20 text-red-400 rounded text-xs hover:bg-red-500/30 transition-colors">删除</button>
+              <button class="flex-1 px-3 py-2 bg-cyan-500/20 text-cyan-400 rounded text-xs hover:bg-cyan-500/30">编辑</button>
+              <button class="flex-1 px-3 py-2 bg-red-500/20 text-red-400 rounded text-xs hover:bg-red-500/30">删除</button>
             </div>
           </div>
         </div>
