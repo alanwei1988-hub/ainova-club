@@ -2,7 +2,7 @@
 
 **青年 AI 创新社群 | Youth AI Innovation Community**
 
-> **Version:** V1.01 (Mobile Optimized)
+> **Version:** V1.02 (Binary Display Restored)
 
 > 技术实践 · 项目共创 · 创业连接
 
