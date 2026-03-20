@@ -2,7 +2,7 @@
 
 **青年 AI 创新社群 | Youth AI Innovation Community**
 
-> **Version:** V1.05 (Form Fields Optimized)
+> **Version:** V1.06 (Grade Dropdown Refined)
 
 > 技术实践 · 项目共创 · 创业连接
 
