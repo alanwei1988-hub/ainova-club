@@ -108,6 +108,73 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   });
 });
 
+// Load events from Supabase
+async function loadEvents() {
+  const eventsList = document.getElementById('eventsList');
+  if (!eventsList) return;
+  
+  try {
+    const { data: events, error } = await window.ainova.supabase
+      .from('events')
+      .select('*')
+      .eq('status', 'upcoming')
+      .order('event_date', { ascending: true });
+    
+    if (error) throw error;
+    
+    if (events.length === 0) {
+      eventsList.innerHTML = '<div class="text-center text-gray-400 py-8"><p>暂无即将开始的活动</p></div>';
+      return;
+    }
+    
+    eventsList.innerHTML = events.map(event => {
+      const date = new Date(event.event_date);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+      const year = date.getFullYear();
+      const startTime = date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+      
+      return `
+        <div class="glass-card event-pulse p-8 rounded-lg border-l-4 border-cyan-400 flex flex-col md:flex-row gap-8 items-center">
+          <div class="md:w-1/4 text-center md:text-left">
+            <div class="text-5xl font-bold font-mono text-cyan-400">${day}</div>
+            <div class="text-xl text-gray-400 font-mono">${month} ${year}</div>
+            <div class="text-sm text-gray-600 mt-2 font-mono">${startTime}</div>
+          </div>
+          <div class="md:w-2/4">
+            <h3 class="text-2xl font-bold mb-2">${event.title}</h3>
+            <p class="text-gray-400 mb-4">${event.description}</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3 py-1 bg-cyan-500/20 text-cyan-400 text-xs font-mono rounded">AI</span>
+              <span class="px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-mono rounded">Hands-on</span>
+              <span class="px-3 py-1 bg-pink-500/20 text-pink-400 text-xs font-mono rounded">Limited: ${event.capacity}人</span>
+            </div>
+          </div>
+          <div class="md:w-1/4 flex justify-end">
+            <button onclick="openRegisterModal('${event.id}')" class="w-full md:w-auto px-6 py-3 bg-white/10 hover:bg-cyan-500 hover:text-black border border-white/20 transition-all font-mono font-bold rounded cursor-pointer">
+              REGISTER_
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+  } catch (err) {
+    console.error('❌ Load events error:', err);
+    eventsList.innerHTML = '<div class="text-center text-red-400 py-8"><p>加载活动失败，请刷新页面</p></div>';
+  }
+}
+
+// Load events when page loads
+if (typeof window.ainova !== 'undefined') {
+  loadEvents();
+} else {
+  // Wait for Supabase to initialize
+  window.addEventListener('DOMContentLoaded', function() {
+    setTimeout(loadEvents, 1000);
+  });
+}
+
 // Mobile menu toggle
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 const mobileMenu = document.getElementById('mobileMenu');
@@ -149,6 +216,25 @@ function closeRegisterModal() {
   }, 300);
 }
 
+// Current selected event ID
+let currentEventId = null;
+
+// Open register modal with event ID
+window.openRegisterModal = function(eventId) {
+  currentEventId = eventId;
+  const modal = document.getElementById('registerModal');
+  const modalContent = document.getElementById('modalContent');
+  
+  modal.classList.remove('hidden');
+  
+  setTimeout(() => {
+    modalContent.classList.remove('scale-95', 'opacity-0');
+    modalContent.classList.add('scale-100', 'opacity-100');
+  }, 10);
+  
+  document.body.style.overflow = 'hidden';
+};
+
 // Handle form submission
 document.getElementById('registerForm')?.addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -156,15 +242,17 @@ document.getElementById('registerForm')?.addEventListener('submit', async functi
   const formData = new FormData(this);
   const data = Object.fromEntries(formData.entries());
   
-  // Get event ID from URL or default to first upcoming event
-  const eventId = new URLSearchParams(window.location.search).get('event') || 'default';
+  if (!currentEventId) {
+    alert('❌ 活动信息丢失，请刷新页面重试');
+    return;
+  }
   
   try {
     // Submit to Supabase
     const { error } = await window.ainova.supabase
       .from('registrations')
       .insert({
-        event_id: eventId,
+        event_id: currentEventId,
         name: data.name,
         phone: data.phone,
         school: data.school || null,
@@ -180,6 +268,9 @@ document.getElementById('registerForm')?.addEventListener('submit', async functi
     
     closeRegisterModal();
     this.reset();
+    
+    // Reload events to refresh UI
+    loadEvents();
     
   } catch (error) {
     console.error('Registration error:', error);
