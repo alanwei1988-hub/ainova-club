@@ -117,3 +117,58 @@ if (mobileMenuBtn && mobileMenu) {
     mobileMenu.classList.toggle('hidden');
   });
 }
+
+// Register Modal Functions
+function openRegisterModal() {
+  const modal = document.getElementById('registerModal');
+  const modalContent = document.getElementById('modalContent');
+  
+  modal.classList.remove('hidden');
+  
+  // Animate modal content (radial expansion effect)
+  setTimeout(() => {
+    modalContent.classList.remove('scale-95', 'opacity-0');
+    modalContent.classList.add('scale-100', 'opacity-100');
+  }, 10);
+  
+  // Prevent body scroll
+  document.body.style.overflow = 'hidden';
+}
+
+function closeRegisterModal() {
+  const modal = document.getElementById('registerModal');
+  const modalContent = document.getElementById('modalContent');
+  
+  // Animate modal close
+  modalContent.classList.remove('scale-100', 'opacity-100');
+  modalContent.classList.add('scale-95', 'opacity-0');
+  
+  setTimeout(() => {
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }, 300);
+}
+
+// Handle form submission
+document.getElementById('registerForm')?.addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const formData = new FormData(this);
+  const data = Object.fromEntries(formData.entries());
+  
+  // Show success message (will be connected to Supabase later)
+  alert('🎉 报名成功！\n\n姓名：' + data.name + '\n学校：' + data.school + '\n\n我们会尽快联系你！');
+  
+  closeRegisterModal();
+  this.reset();
+  
+  // TODO: Connect to Supabase backend
+  console.log('Registration data:', data);
+});
+
+// Close modal on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeRegisterModal();
+  }
+});

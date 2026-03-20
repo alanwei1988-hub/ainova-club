@@ -2,7 +2,7 @@
 
 **青年 AI 创新社群 | Youth AI Innovation Community**
 
-> **Version:** V1.03 (Glitch Effect Restored + Mobile Optimized)
+> **Version:** V1.04 (Registration Modal + Form)
 
 > 技术实践 · 项目共创 · 创业连接
 
