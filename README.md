@@ -1,6 +1,6 @@
 # AINova Club 🧪
 
-**青年 AI 创新共同体 | Youth AI Innovation Community**
+**青年 AI 创新社群 | Youth AI Innovation Community**
 
 > 技术实践 · 项目共创 · 创业连接
 
@@ -8,7 +8,7 @@
 
 ## 📖 项目介绍
 
-AINova Club 是一个面向上海高校学生的跨校 AI 创新社群，由启迪之星（上海）、CCF 上海、优刻得 UCloud 联合发起。
+AINova Club 是一个面向高校学生的跨校 AI 创新社群，由启迪之星（上海）发起。
 
 我们致力于：
 - 🧠 **技术交流** - 围绕模型、Agent、多模态、具身智能等方向开展持续交流
@@ -108,7 +108,7 @@ python -m http.server 8000
 欢迎对 AI 技术、产品和创新创业感兴趣的上海高校学生加入！
 
 **联系方式：**
-- 📍 Location: 上海市杨浦区启迪之星孵化器
+- 📍 Location: 上海市杨浦区启迪之星高质量孵化器
 - 📧 Email: ainova@tusstar.com
 - 💬 GitHub: [github.com/ainova-club](https://github.com/ainova-club)
 
@@ -128,4 +128,4 @@ MIT License
 
 ---
 
-**Built with 💙 & 01010101**
+**Built with 💙 & AI**
