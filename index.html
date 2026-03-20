@@ -121,48 +121,11 @@
           <span class="text-green-400">●</span> LIVE_UPDATES
         </div>
       </div>
-      <div class="space-y-6">
-        <div class="glass-card event-pulse p-8 rounded-lg border-l-4 border-cyan-400 flex flex-col md:flex-row gap-8 items-center">
-          <div class="md:w-1/4">
-            <div class="text-5xl font-bold font-mono text-cyan-400">25</div>
-            <div class="text-xl text-gray-400 font-mono">MAR 2026</div>
-            <div class="text-sm text-gray-600 mt-2 font-mono">19:00 - 22:00</div>
-          </div>
-          <div class="md:w-2/4">
-            <h3 class="text-2xl font-bold mb-2">AI Night: Multi-Agent 系统实战</h3>
-            <p class="text-gray-400 mb-4">手搓你的第一个 Agent 团队。从 ReAct 到 AutoGen，从概念到代码，三小时硬核 Coding Session。</p>
-            <div class="flex gap-2">
-              <span class="px-3 py-1 bg-cyan-500/20 text-cyan-400 text-xs font-mono rounded">Agent</span>
-              <span class="px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-mono rounded">Hands-on</span>
-              <span class="px-3 py-1 bg-pink-500/20 text-pink-400 text-xs font-mono rounded">Limited: 30 人</span>
-            </div>
-          </div>
-          <div class="md:w-1/4 flex justify-end">
-            <button onclick="openRegisterModal()" class="w-full md:w-auto px-6 py-3 bg-white/10 hover:bg-cyan-500 hover:text-black border border-white/20 transition-all font-mono font-bold rounded cursor-pointer">
-              REGISTER_
-            </button>
-          </div>
-        </div>
-        <div class="glass-card p-8 rounded-lg border-l-4 border-purple-400 flex flex-col md:flex-row gap-8 items-center opacity-75 hover:opacity-100 transition-opacity">
-          <div class="md:w-1/4">
-            <div class="text-5xl font-bold font-mono text-purple-400">02</div>
-            <div class="text-xl text-gray-400 font-mono">APR 2026</div>
-            <div class="text-sm text-gray-600 mt-2 font-mono">14:00 - 18:00</div>
-          </div>
-          <div class="md:w-2/4">
-            <h3 class="text-2xl font-bold mb-2">Build Day: 具身智能硬件 Hackathon</h3>
-            <p class="text-gray-400 mb-4">带上你的机械臂、树莓派、传感器。现场组队，48 小时原型开发，优刻得算力全力支持。</p>
-            <div class="flex gap-2">
-              <span class="px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-mono rounded">Robotics</span>
-              <span class="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-mono rounded">Hardware</span>
-              <span class="px-3 py-1 bg-yellow-500/20 text-yellow-400 text-xs font-mono rounded">Prize Pool: ¥10k</span>
-            </div>
-          </div>
-          <div class="md:w-1/4 flex justify-end">
-            <button class="w-full md:w-auto px-6 py-3 bg-white/10 hover:bg-purple-500 hover:text-black border border-white/20 transition-all font-mono font-bold rounded">
-              COMING_SOON
-            </button>
-          </div>
+      <div class="space-y-6" id="eventsList">
+        <!-- Loading state -->
+        <div class="text-center text-gray-400 py-8">
+          <div class="animate-spin inline-block w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full"></div>
+          <p class="mt-4">正在加载活动...</p>
         </div>
       </div>
     </div>
