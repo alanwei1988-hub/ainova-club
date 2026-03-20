@@ -150,20 +150,41 @@ function closeRegisterModal() {
 }
 
 // Handle form submission
-document.getElementById('registerForm')?.addEventListener('submit', function(e) {
+document.getElementById('registerForm')?.addEventListener('submit', async function(e) {
   e.preventDefault();
   
   const formData = new FormData(this);
   const data = Object.fromEntries(formData.entries());
   
-  // Show success message (will be connected to Supabase later)
-  alert('🎉 报名成功！\n\n姓名：' + data.name + '\n学校：' + data.school + '\n\n我们会尽快联系你！');
+  // Get event ID from URL or default to first upcoming event
+  const eventId = new URLSearchParams(window.location.search).get('event') || 'default';
   
-  closeRegisterModal();
-  this.reset();
-  
-  // TODO: Connect to Supabase backend
-  console.log('Registration data:', data);
+  try {
+    // Submit to Supabase
+    const { error } = await window.ainova.supabase
+      .from('registrations')
+      .insert({
+        event_id: eventId,
+        name: data.name,
+        phone: data.phone,
+        school: data.school || null,
+        major: data.major || null,
+        grade: data.grade || null,
+        nickname: data.nickname || null
+      });
+    
+    if (error) throw error;
+    
+    // Show success message
+    alert('🎉 报名成功！\n\n姓名：' + data.name + '\n学校：' + (data.school || '未填写') + '\n\n我们会尽快联系你！');
+    
+    closeRegisterModal();
+    this.reset();
+    
+  } catch (error) {
+    console.error('Registration error:', error);
+    alert('❌ 报名失败：' + error.message + '\n\n请稍后重试或联系我们。');
+  }
 });
 
 // Close modal on Escape key
