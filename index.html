@@ -3,26 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AINova Club | 青年 AI 创新共同体</title>
+  <title>AINova Club | 青年 AI 创新社群</title>
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@300;400;700;900&display=swap" rel="stylesheet">
 </head>
 <body class="antialiased">
   <!-- Navigation -->
-  <nav class="fixed top-0 w-full z-50 bg-black/50 backdrop-blur-md border-b border-white/10">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-center items-center relative">
-      <div class="hidden md:flex gap-12 text-sm font-mono tracking-widest">
+  <nav class="fixed top-0 w-full z-50 bg-black/90 backdrop-blur-md border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center relative">
+      <!-- Logo -->
+      <div class="text-lg font-bold font-mono text-cyan-400">AINova</div>
+      
+      <!-- Desktop Menu -->
+      <div class="hidden md:flex gap-8 text-sm font-mono tracking-widest">
         <a href="#activities" class="hover:text-cyan-400 transition-colors">ACTIVITIES</a>
         <a href="#upcoming" class="hover:text-cyan-400 transition-colors">UPCOMING</a>
         <a href="#gallery" class="hover:text-cyan-400 transition-colors">GALLERY</a>
         <a href="#contact" class="hover:text-cyan-400 transition-colors">CONNECT</a>
       </div>
-      <button class="md:hidden text-white absolute right-6">
+      
+      <!-- Mobile Menu Button -->
+      <button id="mobileMenuBtn" class="md:hidden text-white p-2">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
       </button>
+    </div>
+    
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden md:hidden bg-black/95 border-t border-white/10">
+      <div class="flex flex-col gap-4 px-4 py-6 text-center font-mono">
+        <a href="#activities" class="mobile-link text-cyan-400 hover:text-cyan-300 transition-colors">ACTIVITIES</a>
+        <a href="#upcoming" class="mobile-link text-purple-400 hover:text-purple-300 transition-colors">UPCOMING</a>
+        <a href="#gallery" class="mobile-link text-pink-400 hover:text-pink-300 transition-colors">GALLERY</a>
+        <a href="#contact" class="mobile-link text-green-400 hover:text-green-300 transition-colors">CONNECT</a>
+      </div>
     </div>
   </nav>
 
@@ -32,18 +48,18 @@
     <div id="binaryParticles" class="absolute inset-0 pointer-events-none"></div>
     <div class="scan-line"></div>
     <div class="relative z-10 max-w-6xl mx-auto px-6 text-center">
-      <div class="mb-8 float">
-        <div class="inline-block p-1 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 mb-6">
-          <div class="bg-black rounded-full px-6 py-2">
-            <span class="font-mono text-sm text-cyan-400">YOUTH AI INNOVATION COMMUNITY</span>
+      <div class="mb-6 float">
+        <div class="inline-block p-1 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 mb-4">
+          <div class="bg-black rounded-full px-4 py-2 md:px-6 md:py-2">
+            <span class="font-mono text-xs md:text-sm text-cyan-400">YOUTH AI INNOVATION COMMUNITY</span>
           </div>
         </div>
       </div>
-      <h1 class="text-6xl md:text-8xl font-black mb-6 tracking-tighter glitch" data-text="AINova Club">
+      <h1 class="text-5xl md:text-8xl font-black mb-4 md:mb-6 tracking-tighter glitch" data-text="AINova Club">
         AINova <span class="gradient-text">Club</span>
       </h1>
-      <p class="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto mb-12 font-light leading-relaxed">
-        <span class="font-mono text-cyan-400 text-lg tracking-[0.28em]">11111100001</span>
+      <p class="text-lg md:text-2xl text-gray-400 max-w-3xl mx-auto mb-8 md:mb-12 font-light leading-relaxed px-4">
+        <span class="font-mono text-cyan-400 text-base md:text-lg tracking-[0.28em]">青年 AI 创新社群</span>
       </p>
     </div>
     <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">

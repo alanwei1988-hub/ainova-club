@@ -148,6 +148,34 @@ body {
   background: #00f5ff;
 }
 
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  /* Reduce animation intensity on mobile */
+  .glitch {
+    animation: none;
+  }
+  
+  .glitch::before,
+  .glitch::after {
+    display: none;
+  }
+  
+  /* Optimize binary canvas for mobile */
+  #binaryCanvas {
+    opacity: 0.2;
+  }
+  
+  /* Better touch targets */
+  .glass-card {
+    min-height: 200px;
+  }
+  
+  /* Improve text readability */
+  h1, h2, h3 {
+    word-wrap: break-word;
+  }
+}
+
 /* Photo Gallery Hover */
 .photo-item {
   overflow: hidden;

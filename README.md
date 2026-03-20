@@ -2,6 +2,8 @@
 
 **青年 AI 创新社群 | Youth AI Innovation Community**
 
+> **Version:** V1.01 (Mobile Optimized)
+
 > 技术实践 · 项目共创 · 创业连接
 
 ---
@@ -47,7 +49,7 @@ ainova-club/
 ├── js/
 │   └── main.js         # JavaScript 逻辑
 ├── images/
-│   └── qr-code.png     # 二维码图片
+│   └── qr-code.jpg     # 二维码图片
 ├── README.md           # 项目说明
 └── .gitignore          # Git 忽略文件
 ```
