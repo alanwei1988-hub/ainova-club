@@ -35,8 +35,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (dashboard) dashboard.classList.remove('hidden');
         
         // Close any open modals
+        console.log('🔒 Closing all modals...');
         document.querySelectorAll('[id$="Modal"]').forEach(modal => {
-          if (modal) modal.classList.add('hidden');
+          if (modal) {
+            modal.classList.add('hidden');
+            console.log('Closed modal:', modal.id);
+          }
         });
         
         loadEvents();
