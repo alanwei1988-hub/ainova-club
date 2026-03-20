@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AINova Club | 青年 AI 创新共同体</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@300;400;700;900&display=swap" rel="stylesheet">
+</head>
+<body class="antialiased">
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-50 bg-black/50 backdrop-blur-md border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-center items-center relative">
+      <div class="hidden md:flex gap-12 text-sm font-mono tracking-widest">
+        <a href="#activities" class="hover:text-cyan-400 transition-colors">ACTIVITIES</a>
+        <a href="#upcoming" class="hover:text-cyan-400 transition-colors">UPCOMING</a>
+        <a href="#gallery" class="hover:text-cyan-400 transition-colors">GALLERY</a>
+        <a href="#contact" class="hover:text-cyan-400 transition-colors">CONNECT</a>
+      </div>
+      <button class="md:hidden text-white absolute right-6">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-black via-gray-900 to-black">
+    <canvas id="binaryCanvas"></canvas>
+    <div id="binaryParticles" class="absolute inset-0 pointer-events-none"></div>
+    <div class="scan-line"></div>
+    <div class="relative z-10 max-w-6xl mx-auto px-6 text-center">
+      <div class="mb-8 float">
+        <div class="inline-block p-1 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 mb-6">
+          <div class="bg-black rounded-full px-6 py-2">
+            <span class="font-mono text-sm text-cyan-400">YOUTH AI INNOVATION COMMUNITY</span>
+          </div>
+        </div>
+      </div>
+      <h1 class="text-6xl md:text-8xl font-black mb-6 tracking-tighter glitch" data-text="AINova Club">
+        AINova <span class="gradient-text">Club</span>
+      </h1>
+      <p class="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto mb-12 font-light leading-relaxed">
+        <span class="font-mono text-cyan-400 text-lg tracking-[0.28em]">11111100001</span>
+      </p>
+    </div>
+    <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Activities Section -->
+  <section id="activities" class="py-32 relative bg-black">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-20">
+        <h2 class="text-4xl md:text-5xl font-bold mb-4 font-mono">
+          <span class="text-cyan-400">#</span> WHAT_WE_DO
+        </h2>
+        <div class="h-1 w-32 bg-gradient-to-r from-cyan-500 to-purple-600"></div>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="glass-card p-8 rounded-lg group cursor-pointer neon-border">
+          <div class="mb-6 text-5xl">🧠</div>
+          <h3 class="text-2xl font-bold mb-4 font-mono group-hover:text-cyan-400 transition-colors">KNOWLEDGE_SHARE</h3>
+          <div class="flex items-center text-sm font-mono text-cyan-400">
+            <span class="mr-2">&gt;</span> AI_Night 技术分享夜
+            <span class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+          </div>
+        </div>
+        <div class="glass-card p-8 rounded-lg group cursor-pointer neon-border">
+          <div class="mb-6 text-5xl">👥</div>
+          <h3 class="text-2xl font-bold mb-4 font-mono group-hover:text-purple-400 transition-colors">FIND_YOUR_CREW</h3>
+          <div class="flex items-center text-sm font-mono text-purple-400">
+            <span class="mr-2">&gt;</span> Mixer 青年创新者交流
+            <span class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+          </div>
+        </div>
+        <div class="glass-card p-8 rounded-lg group cursor-pointer neon-border">
+          <div class="mb-6 text-5xl">🛠️</div>
+          <h3 class="text-2xl font-bold mb-4 font-mono group-hover:text-pink-400 transition-colors">SHOW_YOUR_BUILD</h3>
+          <div class="flex items-center text-sm font-mono text-pink-400">
+            <span class="mr-2">&gt;</span> Build Day 项目共创日
+            <span class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Upcoming Events Section -->
+  <section id="upcoming" class="py-32 relative bg-gradient-to-b from-black to-gray-900">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row justify-between items-end mb-16">
+        <div>
+          <h2 class="text-4xl md:text-5xl font-bold mb-4 font-mono">
+            <span class="text-purple-400">#</span> UPCOMING_EVENTS
+          </h2>
+          <div class="h-1 w-32 bg-gradient-to-r from-purple-500 to-pink-600"></div>
+        </div>
+        <div class="mt-6 md:mt-0 font-mono text-gray-400">
+          <span class="text-green-400">●</span> LIVE_UPDATES
+        </div>
+      </div>
+      <div class="space-y-6">
+        <div class="glass-card event-pulse p-8 rounded-lg border-l-4 border-cyan-400 flex flex-col md:flex-row gap-8 items-center">
+          <div class="md:w-1/4">
+            <div class="text-5xl font-bold font-mono text-cyan-400">25</div>
+            <div class="text-xl text-gray-400 font-mono">MAR 2026</div>
+            <div class="text-sm text-gray-600 mt-2 font-mono">19:00 - 22:00</div>
+          </div>
+          <div class="md:w-2/4">
+            <h3 class="text-2xl font-bold mb-2">AI Night: Multi-Agent 系统实战</h3>
+            <p class="text-gray-400 mb-4">手搓你的第一个 Agent 团队。从 ReAct 到 AutoGen，从概念到代码，三小时硬核 Coding Session。</p>
+            <div class="flex gap-2">
+              <span class="px-3 py-1 bg-cyan-500/20 text-cyan-400 text-xs font-mono rounded">Agent</span>
+              <span class="px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-mono rounded">Hands-on</span>
+              <span class="px-3 py-1 bg-pink-500/20 text-pink-400 text-xs font-mono rounded">Limited: 30 人</span>
+            </div>
+          </div>
+          <div class="md:w-1/4 flex justify-end">
+            <button class="w-full md:w-auto px-6 py-3 bg-white/10 hover:bg-cyan-500 hover:text-black border border-white/20 transition-all font-mono font-bold rounded">
+              REGISTER_
+            </button>
+          </div>
+        </div>
+        <div class="glass-card p-8 rounded-lg border-l-4 border-purple-400 flex flex-col md:flex-row gap-8 items-center opacity-75 hover:opacity-100 transition-opacity">
+          <div class="md:w-1/4">
+            <div class="text-5xl font-bold font-mono text-purple-400">02</div>
+            <div class="text-xl text-gray-400 font-mono">APR 2026</div>
+            <div class="text-sm text-gray-600 mt-2 font-mono">14:00 - 18:00</div>
+          </div>
+          <div class="md:w-2/4">
+            <h3 class="text-2xl font-bold mb-2">Build Day: 具身智能硬件 Hackathon</h3>
+            <p class="text-gray-400 mb-4">带上你的机械臂、树莓派、传感器。现场组队，48 小时原型开发，优刻得算力全力支持。</p>
+            <div class="flex gap-2">
+              <span class="px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-mono rounded">Robotics</span>
+              <span class="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-mono rounded">Hardware</span>
+              <span class="px-3 py-1 bg-yellow-500/20 text-yellow-400 text-xs font-mono rounded">Prize Pool: ¥10k</span>
+            </div>
+          </div>
+          <div class="md:w-1/4 flex justify-end">
+            <button class="w-full md:w-auto px-6 py-3 bg-white/10 hover:bg-purple-500 hover:text-black border border-white/20 transition-all font-mono font-bold rounded">
+              COMING_SOON
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section id="gallery" class="py-32 relative bg-black">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold mb-4 font-mono">
+          <span class="text-pink-400">#</span> GALLERY
+        </h2>
+        <div class="h-1 w-32 bg-gradient-to-r from-pink-500 to-red-600"></div>
+        <p class="mt-4 text-gray-400">Life is all about experience</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[300px]">
+        <div class="photo-item rounded-lg md:col-span-2 md:row-span-2 cursor-pointer">
+          <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&q=80" alt="Hackathon" class="w-full h-full object-cover">
+          <div class="photo-overlay">
+            <div>
+              <div class="text-cyan-400 font-mono text-sm mb-1">2026.02.15</div>
+              <h4 class="text-xl font-bold">首届 AI Night</h4>
+              <p class="text-gray-300 text-sm mt-1">40+ 极客参与了我们的开篇之夜</p>
+            </div>
+          </div>
+        </div>
+        <div class="photo-item rounded-lg cursor-pointer">
+          <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&q=80" alt="Team" class="w-full h-full object-cover">
+          <div class="photo-overlay">
+            <div>
+              <div class="text-purple-400 font-mono text-sm mb-1">2026.02.20</div>
+              <h4 class="text-lg font-bold">项目组队现场</h4>
+            </div>
+          </div>
+        </div>
+        <div class="photo-item rounded-lg cursor-pointer">
+          <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&q=80" alt="Coding" class="w-full h-full object-cover">
+          <div class="photo-overlay">
+            <div>
+              <div class="text-pink-400 font-mono text-sm mb-1">2026.03.05</div>
+              <h4 class="text-lg font-bold">深夜 Debug</h4>
+            </div>
+          </div>
+        </div>
+        <div class="photo-item rounded-lg md:col-span-2 cursor-pointer">
+          <img src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=800&q=80" alt="Presentation" class="w-full h-full object-cover">
+          <div class="photo-overlay">
+            <div>
+              <div class="text-green-400 font-mono text-sm mb-1">2026.03.10</div>
+              <h4 class="text-xl font-bold">Demo Day</h4>
+              <p class="text-gray-300 text-sm mt-1">5 个学生项目完成首次路演</p>
+            </div>
+          </div>
+        </div>
+        <div class="photo-item rounded-lg cursor-pointer">
+          <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&q=80" alt="Workshop" class="w-full h-full object-cover">
+          <div class="photo-overlay">
+            <div>
+              <div class="text-yellow-400 font-mono text-sm mb-1">2026.03.15</div>
+              <h4 class="text-lg font-bold">Workshop</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Powered By Section -->
+  <section class="py-20 border-t border-white/10 bg-black">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <p class="text-gray-500 font-mono text-sm tracking-widest">POWERED_BY</p>
+      </div>
+      <div class="flex justify-center items-center opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+        <div class="text-2xl font-bold font-mono text-white text-center">启迪之星（上海）</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-32 relative bg-gradient-to-t from-gray-900 to-black">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-2 gap-16 items-center">
+        <div>
+          <h2 class="text-5xl md:text-7xl font-bold mb-8 tracking-tighter">
+            JOIN OUR <span class="gradient-text">AI COMMUNITY</span>
+          </h2>
+          <div class="space-y-4 font-mono text-sm">
+            <div class="flex items-center gap-4">
+              <span class="text-cyan-400">&gt;</span>
+              <span class="text-gray-300">Location: 上海市杨浦区启迪之星孵化器</span>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="text-purple-400">&gt;</span>
+              <span class="text-gray-300">Email: ainova@tusstar.com</span>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="text-pink-400">&gt;</span>
+              <span class="text-gray-300">GitHub: github.com/ainova-club</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="relative p-1 rounded-2xl bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 shadow-[0_0_40px_rgba(0,245,255,0.12)]">
+            <div class="bg-black rounded-xl p-4">
+              <img src="images/qr-code.png" alt="AINova QR Code" class="w-64 h-64 object-contain rounded-lg bg-white block">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <div class="mt-32 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-gray-600 text-sm font-mono">
+    <p>© 2026 AINova Club | Youth AI Innovation Community</p>
+    <p class="mt-2 md:mt-0">Built with 💙 & 01010101</p>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
