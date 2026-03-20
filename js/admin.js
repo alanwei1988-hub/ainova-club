@@ -11,8 +11,15 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
   
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  console.log('✅ Supabase initialized');
+  // Initialize Supabase with persistent auth
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true
+    }
+  });
+  
+  console.log('✅ Supabase initialized with persistent auth');
   
   let currentUser = null;
 
@@ -20,32 +27,25 @@ document.addEventListener('DOMContentLoaded', function() {
   async function checkAuth() {
     try {
       console.log('🔍 Checking auth session...');
+      
       const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) throw error;
+      
+      if (error) {
+        console.error('Auth error:', error);
+        return;
+      }
       
       if (session) {
         console.log('✅ Session found:', session.user.email);
         currentUser = session.user;
-        
-        // Close login screen and show dashboard
-        const loginScreen = document.getElementById('loginScreen');
-        if (loginScreen) loginScreen.classList.add('hidden');
-        
-        const dashboard = document.getElementById('dashboard');
-        if (dashboard) dashboard.classList.remove('hidden');
-        
-        // Close any open modals
-        console.log('🔒 Closing all modals...');
-        document.querySelectorAll('[id$="Modal"]').forEach(modal => {
-          if (modal) {
-            modal.classList.add('hidden');
-            console.log('Closed modal:', modal.id);
-          }
-        });
-        
-        loadEvents();
+        showDashboard();
       } else {
-        console.log('ℹ️ No active session');
+        console.log('ℹ️ No active session - showing login');
+        // Show login screen, hide dashboard
+        const loginScreen = document.getElementById('loginScreen');
+        const dashboard = document.getElementById('dashboard');
+        if (loginScreen) loginScreen.classList.remove('hidden');
+        if (dashboard) dashboard.classList.add('hidden');
       }
     } catch (err) {
       console.error('❌ Auth check error:', err);
@@ -65,24 +65,26 @@ document.addEventListener('DOMContentLoaded', function() {
       
       try {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        
+        if (error) {
+          console.error('Login error:', error);
+          if (errorEl) {
+            errorEl.textContent = '登录失败：' + error.message;
+            errorEl.classList.remove('hidden');
+          }
+          return;
+        }
         
         console.log('✅ Login successful:', data.user.email);
         currentUser = data.user;
+        
         if (errorEl) errorEl.classList.add('hidden');
-        
-        // Close any open modals
-        const eventModal = document.getElementById('eventModal');
-        const photoModal = document.getElementById('photoModal');
-        if (eventModal) eventModal.classList.add('hidden');
-        if (photoModal) photoModal.classList.add('hidden');
-        
         showDashboard();
         
       } catch (err) {
-        console.error('❌ Login error:', err);
+        console.error('❌ Login exception:', err);
         if (errorEl) {
-          errorEl.textContent = '登录失败：' + err.message;
+          errorEl.textContent = '登录异常：' + err.message;
           errorEl.classList.remove('hidden');
         }
       }
@@ -91,27 +93,48 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Logout
   window.logout = async function() {
+    console.log('👋 Logging out...');
     await supabase.auth.signOut();
     currentUser = null;
-    document.getElementById('loginScreen').classList.remove('hidden');
-    document.getElementById('dashboard').classList.add('hidden');
+    
+    const loginScreen = document.getElementById('loginScreen');
+    const dashboard = document.getElementById('dashboard');
+    if (loginScreen) loginScreen.classList.remove('hidden');
+    if (dashboard) dashboard.classList.add('hidden');
+    
+    console.log('✅ Logged out');
   };
 
   // Show dashboard
   function showDashboard() {
     console.log('📊 Showing dashboard...');
     
+    // Hide login screen
     const loginScreen = document.getElementById('loginScreen');
-    const dashboard = document.getElementById('dashboard');
-    
     if (loginScreen) loginScreen.classList.add('hidden');
+    
+    // Show dashboard
+    const dashboard = document.getElementById('dashboard');
     if (dashboard) dashboard.classList.remove('hidden');
     
-    // Close all modals
-    document.querySelectorAll('[id$="Modal"]').forEach(modal => {
-      if (modal) modal.classList.add('hidden');
+    // Close ALL modals explicitly
+    const modals = ['eventModal', 'photoModal'];
+    modals.forEach(modalId => {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.add('hidden');
+        console.log('🔒 Closed modal:', modalId);
+      }
     });
     
+    // Hide all modal backdrops
+    document.querySelectorAll('.fixed.inset-0').forEach(el => {
+      if (el.id !== 'dashboard' && el.id !== 'loginScreen') {
+        el.classList.add('hidden');
+      }
+    });
+    
+    console.log('✅ Dashboard shown, all modals closed');
     loadEvents();
   }
 
@@ -178,6 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Open create modal
   window.openCreateModal = function() {
+    console.log('📝 Opening create modal');
     document.getElementById('modalTitle').textContent = '新建活动';
     document.getElementById('eventForm').reset();
     document.getElementById('eventId').value = '';
@@ -187,6 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Close modal
   window.closeEventModal = function() {
+    console.log('❌ Closing event modal');
     document.getElementById('eventModal').classList.add('hidden');
   };
 
@@ -355,7 +380,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const { data: photos, error } = await supabase
         .from('gallery_photos')
         .select('*')
-        .order('display_order', { ascending: true });
+        .order('display_order', { ascending: true })
+        .order('created_at', { ascending: false });
       
       if (error) throw error;
       
