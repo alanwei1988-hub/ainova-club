@@ -318,26 +318,36 @@
                 placeholder="请输入你的手机号">
             </div>
             
+            <!-- Divider -->
+            <div class="relative py-4">
+              <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-white/10"></div>
+              </div>
+              <div class="relative flex justify-center text-xs">
+                <span class="px-4 bg-gradient-to-br from-gray-900 via-black to-gray-900 text-gray-500 font-mono">以下信息选填，但很有帮助</span>
+              </div>
+            </div>
+            
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-pink-400 text-xs font-mono mb-2">学校 *</label>
-                <input type="text" name="school" required 
+                <label class="block text-pink-400 text-xs font-mono mb-2">学校</label>
+                <input type="text" name="school" 
                   class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all"
                   placeholder="例如：复旦大学">
               </div>
               <div>
-                <label class="block text-green-400 text-xs font-mono mb-2">专业 *</label>
-                <input type="text" name="major" required 
+                <label class="block text-green-400 text-xs font-mono mb-2">专业</label>
+                <input type="text" name="major" 
                   class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
                   placeholder="例如：计算机科学">
               </div>
             </div>
             
             <div>
-              <label class="block text-yellow-400 text-xs font-mono mb-2">年级 *</label>
-              <select name="grade" required 
+              <label class="block text-yellow-400 text-xs font-mono mb-2">年级</label>
+              <select name="grade" 
                 class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-all cursor-pointer">
-                <option value="" class="bg-black">请选择年级</option>
+                <option value="" class="bg-black">请选择年级（可选）</option>
                 <option value="freshman" class="bg-black">大一 Freshman</option>
                 <option value="sophomore" class="bg-black">大二 Sophomore</option>
                 <option value="junior" class="bg-black">大三 Junior</option>
@@ -351,7 +361,7 @@
               <label class="block text-gray-400 text-xs font-mono mb-2">希望被称呼为 <span class="text-gray-600">(optional)</span></label>
               <input type="text" name="nickname" 
                 class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500 transition-all"
-                placeholder="例如：Alex / 小王">
+                placeholder="例如：Alex / 何同学">
             </div>
             
             <!-- Submit Button -->
