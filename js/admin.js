@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', function() {
         showDashboard();
       } else {
         console.log('ℹ️ No active session - showing login');
-        // Show login screen, hide dashboard
         const loginScreen = document.getElementById('loginScreen');
         const dashboard = document.getElementById('dashboard');
         if (loginScreen) loginScreen.classList.remove('hidden');
@@ -109,15 +108,12 @@ document.addEventListener('DOMContentLoaded', function() {
   function showDashboard() {
     console.log('📊 Showing dashboard...');
     
-    // Hide login screen
     const loginScreen = document.getElementById('loginScreen');
     if (loginScreen) loginScreen.classList.add('hidden');
     
-    // Show dashboard
     const dashboard = document.getElementById('dashboard');
     if (dashboard) dashboard.classList.remove('hidden');
     
-    // Close ALL modals explicitly
     const modals = ['eventModal', 'photoModal'];
     modals.forEach(modalId => {
       const modal = document.getElementById(modalId);
@@ -127,7 +123,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
     
-    // Hide all modal backdrops
     document.querySelectorAll('.fixed.inset-0').forEach(el => {
       if (el.id !== 'dashboard' && el.id !== 'loginScreen') {
         el.classList.add('hidden');
@@ -187,7 +182,6 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
       `).join('');
       
-      // Update event filter
       const eventFilter = document.getElementById('eventFilter');
       if (eventFilter) {
         eventFilter.innerHTML = '<option value="">全部活动</option>' + 
@@ -209,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('eventModal').classList.remove('hidden');
   };
 
-  // Close modal
+  // Close event modal
   window.closeEventModal = function() {
     console.log('❌ Closing event modal');
     document.getElementById('eventModal').classList.add('hidden');
@@ -234,7 +228,6 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('eventCapacity').value = event.capacity;
       document.getElementById('organizerEmail').value = event.organizer_email || '';
       
-      // Format datetime for input
       const date = new Date(event.event_date);
       const localISO = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
       document.getElementById('eventDate').value = localISO;
@@ -267,7 +260,6 @@ document.addEventListener('DOMContentLoaded', function() {
       
       try {
         if (eventId) {
-          // Update existing event
           const { error } = await supabase
             .from('events')
             .update(eventData)
@@ -277,7 +269,6 @@ document.addEventListener('DOMContentLoaded', function() {
           console.log('✅ Event updated');
           
         } else {
-          // Create new event
           eventData.status = 'upcoming';
           const { error } = await supabase
             .from('events')
@@ -374,6 +365,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   };
 
+  // =============================================
+  // 照片管理（修复：编辑和删除功能）
+  // =============================================
+
   // Load gallery
   window.loadGallery = async function() {
     try {
@@ -393,14 +388,23 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
       
+      // 修复：给每张照片的按钮绑定正确的 id 和数据
       galleryList.innerHTML = photos.map(photo => `
         <div class="glass-card rounded-xl overflow-hidden">
-          <img src="${photo.image_url}" alt="${photo.caption}" class="w-full h-48 object-cover">
+          <img src="${photo.image_url}" alt="${photo.caption || ''}" class="w-full h-48 object-cover">
           <div class="p-4">
             <p class="text-sm text-gray-400 mb-3">${photo.caption || '无描述'}</p>
             <div class="flex gap-2">
-              <button class="flex-1 px-3 py-2 bg-cyan-500/20 text-cyan-400 rounded text-xs hover:bg-cyan-500/30">编辑</button>
-              <button class="flex-1 px-3 py-2 bg-red-500/20 text-red-400 rounded text-xs hover:bg-red-500/30">删除</button>
+              <button
+                onclick="editPhoto('${photo.id}', '${(photo.caption || '').replace(/'/g, "\\'")}', ${photo.display_order || 0})"
+                class="flex-1 px-3 py-2 bg-cyan-500/20 text-cyan-400 rounded text-xs hover:bg-cyan-500/30 transition-colors">
+                编辑
+              </button>
+              <button
+                onclick="deletePhoto('${photo.id}', '${(photo.image_url || '').replace(/'/g, "\\'")}')"
+                class="flex-1 px-3 py-2 bg-red-500/20 text-red-400 rounded text-xs hover:bg-red-500/30 transition-colors">
+                删除
+              </button>
             </div>
           </div>
         </div>
@@ -411,9 +415,76 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   };
 
-  // Open photo modal
+  // 编辑照片：弹窗确认后更新描述和排序
+  window.editPhoto = async function(photoId, currentCaption, currentOrder) {
+    const newCaption = prompt('请输入新的照片描述：', currentCaption);
+    if (newCaption === null) return; // 用户点了取消
+
+    const newOrderInput = prompt('请输入显示顺序（数字越小越靠前）：', currentOrder);
+    if (newOrderInput === null) return; // 用户点了取消
+
+    const newOrder = parseInt(newOrderInput);
+    if (isNaN(newOrder)) {
+      alert('显示顺序必须是数字，请重试');
+      return;
+    }
+
+    if (!confirm(`确定要保存以下修改吗？\n\n描述：${newCaption}\n顺序：${newOrder}`)) return;
+
+    try {
+      const { error } = await supabase
+        .from('gallery_photos')
+        .update({
+          caption: newCaption.trim() || null,
+          display_order: newOrder
+        })
+        .eq('id', photoId);
+
+      if (error) throw error;
+
+      console.log('✅ Photo updated');
+      alert('照片信息已更新！');
+      loadGallery();
+
+    } catch (err) {
+      console.error('❌ Edit photo error:', err);
+      alert('更新失败：' + err.message);
+    }
+  };
+
+  // 删除照片：弹窗确认后同时删除数据库记录和存储文件
+  window.deletePhoto = async function(photoId, imageUrl) {
+    if (!confirm('确定要删除这张照片吗？此操作不可撤销。')) return;
+
+    try {
+      // 从 URL 中提取文件名，用于删除存储桶中的文件
+      const fileName = imageUrl.split('/').pop().split('?')[0];
+
+      // 先删除数据库记录
+      const { error: dbError } = await supabase
+        .from('gallery_photos')
+        .delete()
+        .eq('id', photoId);
+
+      if (dbError) throw dbError;
+
+      // 再删除存储桶中的图片文件（即使失败也不影响主流程）
+      await supabase.storage
+        .from('gallery-photos')
+        .remove([fileName]);
+
+      console.log('✅ Photo deleted');
+      alert('照片已删除！');
+      loadGallery();
+
+    } catch (err) {
+      console.error('❌ Delete photo error:', err);
+      alert('删除失败：' + err.message);
+    }
+  };
+
+  // Open photo upload modal
   window.openPhotoModal = async function() {
-    // Load events for dropdown
     try {
       const { data: events } = await supabase
         .from('events')
@@ -459,19 +530,16 @@ document.addEventListener('DOMContentLoaded', function() {
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
       
       try {
-        // Upload to Supabase Storage
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('gallery-photos')
           .upload(fileName, file);
         
         if (uploadError) throw uploadError;
         
-        // Get public URL
         const { data: { publicUrl } } = supabase.storage
           .from('gallery-photos')
           .getPublicUrl(fileName);
         
-        // Save to database
         const { error: dbError } = await supabase
           .from('gallery_photos')
           .insert([{
